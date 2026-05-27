@@ -27,8 +27,11 @@ AppFactory::setContainer($container);
 $app = AppFactory::create();
  
 $app->get('/', function (Request $request, Response $response, $args) {
-  $response->getBody()->write("Welcome in Toutatix !");
-  return $response;
+  ob_start();
+  require __DIR__ . '/views/home.php';
+  $html = ob_get_clean();
+  $response->getBody()->write($html);
+  return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
 });
 
 
