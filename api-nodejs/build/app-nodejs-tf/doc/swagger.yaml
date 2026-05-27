@@ -1,0 +1,60 @@
+swagger: "2.0"
+info:
+  description: "Asterix VS Obelix - Machine Learning API"
+  version: "1.0.0"
+  title: "Asterix VS Obelix - Machine Learning API"
+  contact:
+    email: "emilien.micard@univ-lorraine.fr"
+  
+host: "node|localhost:3000"
+basePath: "/api"
+tags:
+- name: "guesses"
+  description: "Ask for a prediction (Asterix or Obelix)"
+schemes:
+- "http"
+paths:
+  /guesses:
+    
+    post:
+      tags:
+      - "guesses"
+      summary: "Try a new Guess and Post new Image"
+      description: "Try a new Guess and Post new Image"
+      operationId: "doGuess"
+      consumes:
+      - "multipart/form-data"
+      produces:
+      - "application/json"
+      parameters:
+        - in: "formData"
+          name: "guessimage"
+          type: "file"
+          description: "The file image to upload."
+          required: true
+
+      responses:
+        "200":
+          description: "AI try to guess and return guess object"
+          schema:
+            $ref: "#/definitions/Guess"
+        "500":
+          description: "Error of prediction"
+          
+    
+     
+definitions:
+
+   
+  
+    
+  Guess:
+    type: "object"
+    properties:
+      guess: 
+        type: "string"
+        enum: ["Asterix", "Obelix"]
+        description: "answer from the AI model (le DevInA)"
+        example: "Asterix"
+      
+   
