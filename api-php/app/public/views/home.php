@@ -103,6 +103,37 @@
         <img id="result-image" class="result-image" alt="Image analysée" />
       </div>
       <p class="result-guess" id="result-guess"></p>
+
+      <div class="feedback" id="feedback">
+        <p class="feedback-question">Ce résultat est-il correct&nbsp;?</p>
+        <div class="feedback-buttons" role="group" aria-label="Votre retour sur la prédiction">
+          <button type="button" class="feedback-btn feedback-yes" data-win="1">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M7 11v9H3v-9h4z"/>
+              <path d="M7 11l4-8a2 2 0 0 1 3 2v5h5a2 2 0 0 1 2 2.3l-1.5 6A2 2 0 0 1 17.5 20H7"/>
+            </svg>
+            <span>Oui</span>
+          </button>
+          <button type="button" class="feedback-btn feedback-neutral" data-win="0">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"/>
+              <line x1="8" y1="14" x2="16" y2="14"/>
+              <circle cx="9" cy="10" r="0.8" fill="currentColor"/>
+              <circle cx="15" cy="10" r="0.8" fill="currentColor"/>
+            </svg>
+            <span>Neutre</span>
+          </button>
+          <button type="button" class="feedback-btn feedback-no" data-win="-1">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17 13V4h4v9h-4z"/>
+              <path d="M17 13l-4 8a2 2 0 0 1-3-2v-5H5a2 2 0 0 1-2-2.3L4.5 5.7A2 2 0 0 1 6.5 4H17"/>
+            </svg>
+            <span>Non</span>
+          </button>
+        </div>
+        <p class="feedback-thanks" id="feedback-thanks" hidden>Merci pour votre retour</p>
+        <p class="feedback-stats" id="feedback-stats" hidden></p>
+      </div>
     </section>
 
     <div class="error-message" id="error-message" hidden role="alert"></div>

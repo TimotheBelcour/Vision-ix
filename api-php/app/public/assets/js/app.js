@@ -10,6 +10,9 @@
   const resultImage   = document.getElementById('result-image');
   const resultGuess   = document.getElementById('result-guess');
   const errorMessage  = document.getElementById('error-message');
+  const feedbackBtns  = document.querySelectorAll('.feedback-btn');
+  const feedbackThanks= document.getElementById('feedback-thanks');
+  const feedbackStats = document.getElementById('feedback-stats');
 
   const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
@@ -28,6 +31,16 @@
     errorMessage.textContent = '';
   }
 
+  function resetFeedback() {
+    feedbackBtns.forEach(b => {
+      b.disabled = false;
+      b.classList.remove('is-selected');
+    });
+    feedbackThanks.hidden = true;
+    feedbackStats.hidden = true;
+    feedbackStats.textContent = '';
+  }
+
   function setFile(file) {
     if (!file) return;
     if (!ALLOWED_TYPES.includes(file.type)) {
@@ -41,6 +54,7 @@
     fileName.textContent = `Image sélectionnée : ${file.name}`;
     btnAnalyse.disabled = false;
     resultCard.hidden = true;
+    resetFeedback();
   }
 
   btnChoose.addEventListener('click', (e) => {
@@ -121,6 +135,7 @@
       resultImage.alt = `Image analysée — ${data.guess}`;
       resultGuess.textContent = data.guess;
       resultCard.dataset.guessId = String(data.id);
+      resetFeedback();
       resultCard.hidden = false;
       resultCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } catch (err) {
@@ -129,5 +144,42 @@
       btnAnalyse.classList.remove('is-loading');
       btnAnalyse.disabled = false;
     }
+  });
+
+  // Feedback : PUT /api/guesses/{id}
+  feedbackBtns.forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!state.currentGuessId) return;
+      const win = parseInt(btn.dataset.win, 10);
+
+      feedbackBtns.forEach(b => { b.disabled = true; });
+      btn.classList.add('is-selected');
+
+      try {
+        const res = await fetch(`/api/guesses/${state.currentGuessId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ win }),
+        });
+
+        const data = await res.json().catch(() => null);
+
+        if (!res.ok) {
+          const msg = (data && data.message) ? data.message : `Erreur ${res.status}`;
+          throw new Error(msg);
+        }
+
+        feedbackThanks.hidden = false;
+
+        if (data && typeof data.total !== 'undefined' && typeof data.win !== 'undefined') {
+          feedbackStats.textContent = `${data.win} bonne(s) réponse(s) sur ${data.total} analyse(s) notée(s)`;
+          feedbackStats.hidden = false;
+        }
+      } catch (err) {
+        showError(`Envoi du retour impossible : ${err.message}`);
+        feedbackBtns.forEach(b => { b.disabled = false; });
+        btn.classList.remove('is-selected');
+      }
+    });
   });
 })();
