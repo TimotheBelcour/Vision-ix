@@ -225,6 +225,12 @@
   });
 
   // Feedback : PUT /api/guesses/{id}
+  const FEEDBACK_MESSAGES = {
+     '1': 'Merci, vous avez confirmé la prédiction.',
+     '0': 'Merci, cette image sera considérée comme hors catégorie.',
+    '-1': 'Merci, vous avez signalé une mauvaise prédiction.',
+  };
+
   feedbackBtns.forEach(btn => {
     btn.addEventListener('click', async () => {
       if (!state.currentGuessId) return;
@@ -247,10 +253,16 @@
           throw new Error(msg);
         }
 
+        // Message personnalisé selon le choix
+        feedbackThanks.textContent = FEEDBACK_MESSAGES[String(win)];
         feedbackThanks.hidden = false;
 
-        if (data && typeof data.total !== 'undefined' && typeof data.win !== 'undefined') {
-          feedbackStats.textContent = `${data.win} bonne(s) réponse(s) sur ${data.total} analyse(s) notée(s)`;
+        // Stats : neutres exclus du taux de réussite (l'API ne les compte pas non plus)
+        if (win === 0) {
+          feedbackStats.textContent = 'Les retours neutres ne sont pas inclus dans le taux de réussite.';
+          feedbackStats.hidden = false;
+        } else if (data && typeof data.total !== 'undefined' && typeof data.win !== 'undefined') {
+          feedbackStats.textContent = `Taux de réussite de l'IA : ${data.win} bonne${data.win > 1 ? 's' : ''} prédiction${data.win > 1 ? 's' : ''} sur ${data.total} évaluation${data.total > 1 ? 's' : ''} Oui/Non.`;
           feedbackStats.hidden = false;
         }
       } catch (err) {
