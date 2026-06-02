@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="/assets/css/style.css" />
+  <link rel="stylesheet" href="/assets/css/style.css?v=3" />
 </head>
 <body>
 
@@ -75,17 +75,37 @@
 
       <div class="divider"><span>ou</span></div>
 
-      <button type="button" class="btn btn-ghost" id="btn-camera" aria-describedby="camera-notice">
+      <button type="button" class="btn btn-ghost" id="btn-camera">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/>
           <circle cx="12" cy="13" r="4"/>
         </svg>
         <span>Prendre une photo</span>
       </button>
-      <p id="camera-notice" class="camera-notice" hidden role="status">Fonction caméra à venir</p>
-
       <p class="file-name" id="file-name" hidden></p>
     </section>
+
+    <!-- Modale webcam -->
+    <div class="camera-modal" id="camera-modal" hidden role="dialog" aria-modal="true" aria-labelledby="camera-modal-title">
+      <div class="camera-box">
+        <div class="camera-box-header">
+          <h3 id="camera-modal-title">Prendre une photo</h3>
+          <button type="button" class="camera-close" id="camera-close" aria-label="Fermer">&times;</button>
+        </div>
+        <video id="camera-video" autoplay playsinline muted></video>
+        <p class="camera-error" id="camera-error" hidden></p>
+        <canvas id="camera-canvas" hidden></canvas>
+        <div class="camera-box-footer">
+          <button type="button" class="btn btn-capture" id="btn-capture" disabled>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3" fill="currentColor" stroke="none"/>
+              <path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z"/>
+            </svg>
+            Capturer
+          </button>
+        </div>
+      </div>
+    </div>
 
     <button type="button" class="btn btn-analyse" id="btn-analyse" disabled>
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -155,6 +175,6 @@
     </div>
   </footer>
 
-  <script src="/assets/js/app.js" defer></script>
+  <script src="/assets/js/app.js?v=3" defer></script>
 </body>
 </html>

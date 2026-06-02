@@ -317,14 +317,94 @@ body {
   font-style: italic;
 }
 
-/* ============ CAMERA NOTICE ============ */
+/* ============ CAMERA MODAL ============ */
 
-.camera-notice {
-  margin: 10px 0 0;
+.camera-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 16px;
+}
+
+.camera-modal[hidden] {
+  display: none;
+}
+
+.camera-box {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 540px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.camera-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+}
+
+.camera-box-header h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 17px;
+  color: var(--color-text);
+}
+
+.camera-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: #666;
+  padding: 2px 6px;
+}
+
+.camera-close:hover {
+  color: #000;
+}
+
+/* La balise video seule — display:block + width:100% + height:auto
+   est la combinaison la plus fiable sur Safari/WebKit pour afficher
+   un flux getUserMedia sans fond noir */
+#camera-video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.camera-error {
+  padding: 16px;
+  font-size: 13px;
+  color: var(--color-red-dark);
   text-align: center;
-  font-size: 12px;
-  font-style: italic;
-  color: var(--color-text-muted);
+}
+
+.camera-box-footer {
+  padding: 14px 16px;
+  text-align: center;
+  border-top: 1px solid #ddd;
+}
+
+.btn-capture {
+  background: var(--color-green);
+  color: #fff;
+  font-size: 14px;
+  padding: 11px 32px;
+  gap: 8px;
+  box-shadow: 0 2px 0 var(--color-green-deep);
+}
+
+.btn-capture:hover:not(:disabled) {
+  background: var(--color-green-deep);
 }
 
 /* ============ RESULT CARD ============ */

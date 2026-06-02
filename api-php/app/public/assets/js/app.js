@@ -5,7 +5,6 @@
   const btnCamera     = document.getElementById('btn-camera');
   const btnAnalyse    = document.getElementById('btn-analyse');
   const fileName      = document.getElementById('file-name');
-  const cameraNotice  = document.getElementById('camera-notice');
   const resultCard    = document.getElementById('result-card');
   const resultImage   = document.getElementById('result-image');
   const resultGuess   = document.getElementById('result-guess');
@@ -13,6 +12,16 @@
   const feedbackBtns  = document.querySelectorAll('.feedback-btn');
   const feedbackThanks= document.getElementById('feedback-thanks');
   const feedbackStats = document.getElementById('feedback-stats');
+
+  // Webcam
+  const cameraModal   = document.getElementById('camera-modal');
+  const cameraVideo   = document.getElementById('camera-video');
+  const cameraCanvas  = document.getElementById('camera-canvas');
+  const cameraError   = document.getElementById('camera-error');
+  const cameraClose   = document.getElementById('camera-close');
+  const btnCapture    = document.getElementById('btn-capture');
+
+  let mediaStream = null;
 
   const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
@@ -96,14 +105,83 @@
     setFile(file);
   });
 
-  // Bouton "Prendre une photo" — fonctionnalité à venir
-  let cameraNoticeTimer = null;
-  btnCamera.addEventListener('click', () => {
-    cameraNotice.hidden = false;
-    if (cameraNoticeTimer) clearTimeout(cameraNoticeTimer);
-    cameraNoticeTimer = setTimeout(() => {
-      cameraNotice.hidden = true;
-    }, 2500);
+  function stopStream() {
+    if (mediaStream) {
+      mediaStream.getTracks().forEach(function(t) { t.stop(); });
+      mediaStream = null;
+    }
+    cameraVideo.srcObject = null;
+  }
+
+  function closeCamera() {
+    stopStream();
+    cameraModal.hidden = true;
+    cameraError.hidden = true;
+    cameraError.textContent = '';
+    btnCapture.disabled = true;
+  }
+
+  async function openCamera() {
+    cameraError.hidden = true;
+    cameraError.textContent = '';
+    btnCapture.disabled = true;
+    cameraModal.hidden = false;
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      cameraError.textContent = 'Votre navigateur ne supporte pas l\'acces a la camera.';
+      cameraError.hidden = false;
+      return;
+    }
+
+    try {
+      mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      cameraVideo.srcObject = mediaStream;
+      await cameraVideo.play();
+      btnCapture.disabled = false;
+    } catch (err) {
+      var msg;
+      if (err.name === 'NotAllowedError') {
+        msg = 'Acces a la camera refuse. Autorisez-le dans les reglages de votre navigateur.';
+      } else if (err.name === 'NotFoundError') {
+        msg = 'Aucune camera detectee sur cet appareil.';
+      } else {
+        msg = 'Impossible d\'acceder a la camera : ' + err.message;
+      }
+      cameraError.textContent = msg;
+      cameraError.hidden = false;
+    }
+  }
+
+  btnCamera.addEventListener('click', openCamera);
+  cameraClose.addEventListener('click', closeCamera);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !cameraModal.hidden) closeCamera();
+  });
+
+  cameraModal.addEventListener('click', function(e) {
+    if (e.target === cameraModal) closeCamera();
+  });
+
+  btnCapture.addEventListener('click', function() {
+    if (!cameraVideo.srcObject || cameraVideo.videoWidth === 0) return;
+
+    var w = cameraVideo.videoWidth;
+    var h = cameraVideo.videoHeight;
+    cameraCanvas.width  = w;
+    cameraCanvas.height = h;
+    cameraCanvas.getContext('2d').drawImage(cameraVideo, 0, 0, w, h);
+
+    cameraCanvas.toBlob(function(blob) {
+      if (!blob) {
+        showError('Impossible de capturer l\'image. Reessayez.');
+        closeCamera();
+        return;
+      }
+      var capturedFile = new File([blob], 'capture.jpg', { type: 'image/jpeg' });
+      closeCamera();
+      setFile(capturedFile);
+    }, 'image/jpeg', 0.92);
   });
 
   // ANALYSER : envoi à POST /api/guesses
