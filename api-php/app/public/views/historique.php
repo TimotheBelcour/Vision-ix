@@ -33,6 +33,7 @@
         <a href="#" class="nav-link">Statistique</a>
         <a href="/historique" class="nav-link is-active">Historique</a>
       </nav>
+      <div class="nav-actions" id="nav-actions"></div>
     </div>
   </header>
 
@@ -93,6 +94,7 @@
     </div>
   </footer>
 
+  <script src="/assets/js/auth.js" defer></script>
   <script src="/assets/js/historique.js" defer></script>
 </body>
 </html>

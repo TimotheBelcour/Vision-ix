@@ -34,6 +34,14 @@ $app->get('/', function (Request $request, Response $response, $args) {
   return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
 });
 
+$app->get('/login', function (Request $request, Response $response, $args) {
+  ob_start();
+  require __DIR__ . '/views/login.php';
+  $html = ob_get_clean();
+  $response->getBody()->write($html);
+  return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
+});
+
 $app->get('/historique', function (Request $request, Response $response, $args) {
   ob_start();
   require __DIR__ . '/views/historique.php';
@@ -41,7 +49,7 @@ $app->get('/historique', function (Request $request, Response $response, $args) 
   $response->getBody()->write($html);
   return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
 });
-
+ 
 $app->get('/tests', function (Request $request, Response $response, $args) {
   $jsonresult = array();
 

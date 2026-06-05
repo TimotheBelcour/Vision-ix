@@ -18,6 +18,10 @@
     currentGuessId: null,
   };
 
+  function getAuthToken() {
+    return window.localStorage.getItem('visionixAuthToken') || window.sessionStorage.getItem('visionixAuthToken');
+  }
+
   function showError(msg) {
     errorMessage.textContent = msg;
     errorMessage.hidden = false;
@@ -104,8 +108,19 @@
     btnAnalyse.classList.add('is-loading');
 
     try {
+      const headers = {};
+      const token = getAuthToken();
+
+      if (!token) {
+        showError('Vous devez être connecté pour enregistrer une prédiction.');
+        return;
+      }
+
+      headers.Authorization = `Bearer ${token}`;
+
       const res = await fetch('/api/guesses', {
         method: 'POST',
+        headers,
         body: formData,
       });
 

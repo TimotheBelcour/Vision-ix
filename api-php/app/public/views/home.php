@@ -33,6 +33,7 @@
         <a href="#" class="nav-link">Statistique</a>
         <a href="/historique" class="nav-link">Historique</a>
       </nav>
+      <div class="nav-actions" id="nav-actions"></div>
     </div>
   </header>
 
@@ -97,6 +98,8 @@
       <span>ANALYSER</span>
     </button>
 
+    <p class="login-note">Connectez-vous pour enregistrer vos prédictions et les retrouver dans l'historique.</p>
+
     <section class="card result-card" id="result-card" hidden aria-live="polite">
       <h2 class="card-title result-title">Résultat IA</h2>
       <div class="result-image-wrap">
@@ -124,6 +127,7 @@
     </div>
   </footer>
 
+  <script src="/assets/js/auth.js" defer></script>
   <script src="/assets/js/app.js" defer></script>
 </body>
 </html>

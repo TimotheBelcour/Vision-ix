@@ -1,5 +1,9 @@
 <?php
 
+global $app;
+
+require_once __DIR__ . '/../auth/JwtHandler.php';
+require_once __DIR__ . '/../auth/Exceptions.php';
 require_once __DIR__ . '/../db/DBConnection.php';
 
 
@@ -9,10 +13,29 @@ use Psr\Http\Message\UploadedFileInterface as UploadFile;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7;
 
+if (!function_exists('ensureGuessesUsernameColumn')) {
+    function ensureGuessesUsernameColumn($db) {
+        $stmt = $db->query("SHOW COLUMNS FROM guesses LIKE 'username'");
+        $column = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$column) {
+            $db->exec("ALTER TABLE guesses ADD COLUMN username varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL AFTER guess");
+        }
+    }
+}
 
 
 /* Post Image and Make a guess ('Asterix' or 'Obelix') */
 $app->post('/api/guesses', function (Request $request, Response $response) {
+    try {
+        $tokenData = get_token_infos($request);
+    } catch (Auth\UnauthenticatedException $e) {
+        $response->getBody()->write('{"success": false, "message": "' . $e->getMessage() . '"}');
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(401);
+    } catch (Exception $e) {
+        $response->getBody()->write('{"success": false, "message": "' . $e->getMessage() . '"}');
+        return $response->withHeader('Content-Type', 'application/json')->withStatus(500);
+    }
+
     //retrieve upload directory from config
     $directory = $this->get('upload_directory');
 
@@ -58,14 +81,16 @@ $app->post('/api/guesses', function (Request $request, Response $response) {
                 try {
 
                     /* insert into db */
-                    $sql = "INSERT INTO guesses (`id`, `imagepath`, `guess`) VALUES(:id, :imagepath, :guess )";
+                    $sql = "INSERT INTO guesses (`id`, `imagepath`, `guess`, `username`) VALUES(:id, :imagepath, :guess, :username)";
                     //connect to DB and exec query
                     $dbconn = new DB\DBConnection();
                     $db = $dbconn->connect();    
+                    ensureGuessesUsernameColumn($db);
                     $stmt = $db->prepare( $sql );
                     $stmt->bindParam(':id', $id);  
                     $stmt->bindParam(':imagepath', $imagepath );
                     $stmt->bindParam(':guess', $guess );
+                    $stmt->bindParam(':username', $tokenData->username );
                     // execute insert sql
                     $stmt->execute();
                     //close connection

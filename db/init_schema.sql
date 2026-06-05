@@ -14,5 +14,6 @@ CREATE TABLE `guesses` (
   `id` BIGINT UNSIGNED NOT NULL,
   `imagepath` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `guess` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `username` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
   `win` TINYINT SIGNED 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

@@ -21,7 +21,7 @@
   };
 
   function getAuthToken() {
-    return window.localStorage.getItem('authToken') || window.sessionStorage.getItem('authToken');
+    return window.localStorage.getItem('visionixAuthToken') || window.sessionStorage.getItem('visionixAuthToken');
   }
 
   function formatDate(dateISO) {

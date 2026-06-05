@@ -1,5 +1,7 @@
 <?php
 
+global $app;
+
 require_once __DIR__ . '/../auth/JwtHandler.php';
 require_once __DIR__ . '/../auth/Exceptions.php';
 require_once __DIR__ . '/../db/DBConnection.php';
@@ -7,6 +9,16 @@ require_once __DIR__ . '/../utils/AutoDeleteStream.php';
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
+
+if (!function_exists('ensureGuessesUsernameColumn')) {
+    function ensureGuessesUsernameColumn($db) {
+        $stmt = $db->query("SHOW COLUMNS FROM guesses LIKE 'username'");
+        $column = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$column) {
+            $db->exec("ALTER TABLE guesses ADD COLUMN username varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL AFTER guess");
+        }
+    }
+}
 
 
 /**
@@ -28,15 +40,17 @@ $app->get('/api/guesses', function( Request $request, Response $response){
             // (response code should be 200 if everything is OK)
             /* TODO */
 
-            // Prépare la requête SQL pour récupérer tout l’historique des guesses, du plus récent au plus ancien
-            $sql = "SELECT * FROM guesses ORDER BY id DESC";
+            // Prépare la requête SQL pour récupérer l’historique de l’utilisateur connecté
+            $sql = "SELECT * FROM guesses WHERE username = :username ORDER BY id DESC";
 
             // Crée la connexion à la base de données
             $dbconn = new DB\DBConnection();
             $db = $dbconn->connect();
+            ensureGuessesUsernameColumn($db);
 
             // Prépare et exécute la requête SQL
             $stmt = $db->prepare($sql);
+            $stmt->bindParam(':username', $userInfos->username);
             $stmt->execute();
 
             // Récupère les résultats de la requête SQL et les stocke dans un tableau associatif
@@ -112,12 +126,14 @@ $app->get('/api/guesses/images', function( Request $request, Response $response)
 
             // Récupère les images dont le feedback est exploitable : win = 1 ou win = -1.
             // Les valeurs NULL ou 0 ne doivent pas être exportées dans l'archive.
-            $sql = "SELECT id, imagepath, guess, win FROM guesses WHERE win IS NOT NULL AND win <> 0 ORDER BY id DESC";
+            $sql = "SELECT id, imagepath, guess, win FROM guesses WHERE win IS NOT NULL AND win <> 0 AND username = :username ORDER BY id DESC";
             
             $dbconn = new DB\DBConnection();
             $db = $dbconn->connect();
+            ensureGuessesUsernameColumn($db);
 
             $stmt = $db->prepare($sql);
+            $stmt->bindParam(':username', $userInfos->username);
             $stmt->execute();
             $guesses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
