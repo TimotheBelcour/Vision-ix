@@ -29,9 +29,9 @@
       </a>
 
       <nav class="main-nav" aria-label="Navigation principale">
-        <a href="#" class="nav-link is-active">Défiez-moi</a>
+        <a href="/" class="nav-link is-active">Défiez-moi</a>
         <a href="#" class="nav-link">Statistique</a>
-        <a href="#" class="nav-link">Historique</a>
+        <a href="/historique" class="nav-link">Historique</a>
       </nav>
     </div>
   </header>
