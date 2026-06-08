@@ -2,19 +2,21 @@
 
 global $app;
 
-require_once __DIR__ . '/../auth/JwtHandler.php';
-require_once __DIR__ . '/../auth/Exceptions.php';
-require_once __DIR__ . '/../db/DBConnection.php';
-require_once __DIR__ . '/../utils/AutoDeleteStream.php';
+require_once __DIR__ . '/../auth/JwtHandler.php'; // Charge la classe JWT pour décoder le token de l'utilisateur.
+require_once __DIR__ . '/../auth/Exceptions.php'; // Charge les exceptions personnalisées pour les erreurs d'authentification.
+require_once __DIR__ . '/../db/DBConnection.php'; // Charge la connexion à la base de données.
+require_once __DIR__ . '/../utils/AutoDeleteStream.php'; // Charge l'utilitaire pour envoyer des fichiers ZIP en réponse.
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
 if (!function_exists('ensureGuessesUsernameColumn')) {
     function ensureGuessesUsernameColumn($db) {
+        // Vérifie que la colonne username existe dans la table guesses.
         $stmt = $db->query("SHOW COLUMNS FROM guesses LIKE 'username'");
         $column = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$column) {
+            // Ajoute la colonne username si elle n'existe pas encore.
             $db->exec("ALTER TABLE guesses ADD COLUMN username varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL AFTER guess");
         }
     }
@@ -31,14 +33,12 @@ $app->get('/api/guesses', function( Request $request, Response $response){
     // (using get_token_infos function which throw exception if token is wrong)
     try
     {
-        /* TODO */
         // Vérifie que la requête contient un token JWT valide. Sinon la route renverra une erreur 401.
         $userInfos = get_token_infos($request);
 
         try {
-            // From DB, get all guesses and return json array with all infos (see swagger api response format)
-            // (response code should be 200 if everything is OK)
-            /* TODO */
+            // Récupère depuis la base de données l'historique des prédictions de l'utilisateur connecté.
+            // La réponse doit être un tableau JSON de toutes les entrées.
 
             // Prépare la requête SQL pour récupérer l’historique de l’utilisateur connecté
             $sql = "SELECT * FROM guesses WHERE username = :username ORDER BY id DESC";
@@ -102,27 +102,15 @@ $app->get('/api/guesses', function( Request $request, Response $response){
  * (Images with no feedback (win == NULL) or with feedback Stalemate (win == 0) are not downloaded)
  */
 $app->get('/api/guesses/images', function( Request $request, Response $response){
-    //retrieve upload directory from config
-    // the zip file will be temparary stored inside $directory root folder
+
     $directory = $this->get('upload_directory');
-    // Do a try catch which try to get user infos from token 
-    // (using get_token_infos function which throw exception if token is wrong)
+
     try
-    {
-        /* TODO */
-        
+    {       
         // Vérifie que la requête contient un token JWT valide.
         $userInfos = get_token_infos($request);
 
         try {
-            // Browse History entries from DB (table guesses) and add downloadable images as entries in a zip archive
-            // You should use createZip Function :)
-            //
-            // /!\ must produce 2 variable :
-            // - $filepath : path to the zip file (ex: /data/uploads/archive.zip)
-            // - $filename : file name of the zip file (ex : archive.zip)
-
-            /* TODO */
 
             // Récupère les images dont le feedback est exploitable : win = 1 ou win = -1.
             // Les valeurs NULL ou 0 ne doivent pas être exportées dans l'archive.
@@ -310,26 +298,25 @@ function createZip($filespaths, $entriesnames, $zipFileName)
  * The UnauthenticatedException must be catched in the caller and should result to a 401 Http Error
  */
 function get_token_infos(Request $request){
-
-
+    // Vérifie la présence de l'en-tête Authorization.
     if ($request->hasHeader('Authorization')) {
         list($token) = sscanf($request->getHeaderLine('Authorization'), 'Bearer %s');
 
         $jwt = new Auth\JwtHandler();
         try
         {
-            $data = $jwt->_jwt_decode_data($token);
+            $data = $jwt->_jwt_decode_data($token); // Décode le token JWT.
 
-            return $data;
+            return $data; // Retourne les informations présentes dans le token.
         }
         catch (Exception $e)
         {
+            // Lance une exception d'authentification si le token est invalide.
             throw new Auth\UnauthenticatedException("Invalid token : ". $e->getMessage());
         }
-        
-        
     }
     else{
+        // Lance une exception si aucun header Authorization n'a été envoyé.
         throw new Auth\UnauthenticatedException("Unable to find Authorization Header");
     }
 }

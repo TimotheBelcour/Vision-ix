@@ -34,6 +34,7 @@ $app->get('/', function (Request $request, Response $response, $args) {
   return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
 });
 
+// Route de la page de connexion. Affiche le template HTML du login.
 $app->get('/login', function (Request $request, Response $response, $args) {
   ob_start();
   require __DIR__ . '/views/login.php';
@@ -42,6 +43,7 @@ $app->get('/login', function (Request $request, Response $response, $args) {
   return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
 });
 
+// Route de la page historique. Affiche le template HTML de l'historique.
 $app->get('/historique', function (Request $request, Response $response, $args) {
   ob_start();
   require __DIR__ . '/views/historique.php';

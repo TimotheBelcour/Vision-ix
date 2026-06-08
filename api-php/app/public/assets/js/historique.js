@@ -1,11 +1,11 @@
 (() => {
   const state = {
-    guesses: [],
-    filteredGuesses: [],
-    currentFilter: 'all',
-    sortDescending: true,
-    currentPage: 1,
-    pageSize: 9,
+    guesses: [], // Historique complet récupéré depuis l'API.
+    filteredGuesses: [], // Historique filtré avant affichage.
+    currentFilter: 'all', // Filtre actif (all, Asterix ou Obelix).
+    sortDescending: true, // Tri par date décroissante.
+    currentPage: 1, // Page actuelle pour la pagination.
+    pageSize: 9, // Nombre d'éléments affichés par page.
   };
 
   const elements = {
@@ -13,7 +13,7 @@
     statsAsterix: document.getElementById('stat-asterix'),
     statsObelix: document.getElementById('stat-obelix'),
     statsAverage: document.getElementById('stat-average'),
-    filterButtons: Array.from(document.querySelectorAll('.btn-filter')),
+    filterButtons: Array.from(document.querySelectorAll('.btn-filter')), // Boutons de filtre.
     sortButton: document.getElementById('sort-button'),
     historyGrid: document.getElementById('history-grid'),
     pagination: document.getElementById('pagination'),
@@ -21,35 +21,37 @@
   };
 
   function getAuthToken() {
+    // Récupère le token d'authentification stocké.
     return window.localStorage.getItem('visionixAuthToken') || window.sessionStorage.getItem('visionixAuthToken');
   }
 
   function formatDate(dateISO) {
     const date = new Date(dateISO);
-    if (Number.isNaN(date.getTime())) return 'Date inconnue';
+    if (Number.isNaN(date.getTime())) return 'Date inconnue'; // Gère les dates invalides.
     return date.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
       + ' • '
       + date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
   }
 
   function normalizeReliability(winValue) {
-    if (winValue === null || winValue === undefined) return 0;
+    if (winValue === null || winValue === undefined) return 0; // Valeur manquante.
     const value = Number(winValue);
-    if (value <= 1) return Math.round(Math.max(0, Math.min(1, value)) * 100);
-    return Math.round(Math.max(0, Math.min(100, value)));
+    if (value <= 1) return Math.round(Math.max(0, Math.min(1, value)) * 100); // Si win est 0 ou 1.
+    return Math.round(Math.max(0, Math.min(100, value))); // Valeur déjà en pourcentage.
   }
 
   function getBadgeClass(guess) {
+    // Définit la classe CSS du badge selon le personnage prédit.
     return guess.toLowerCase().includes('asterix') ? 'badge-asterix' : 'badge-obelix';
   }
 
   const fallbackImage = 'https://via.placeholder.com/520x360/efe1c0/1a3d1f?text=Image+indisponible';
 
   function getImageUrl(path) {
-    if (!path) return fallbackImage;
-    if (/^https?:\/\//.test(path)) return path;
-    if (path.startsWith('/')) return path;
-    return fallbackImage;
+    if (!path) return fallbackImage; // Si aucune image n'est fournie.
+    if (/^https?:\/\//.test(path)) return path; // Si le chemin est déjà une URL complète.
+    if (path.startsWith('/')) return path; // Si c'est un chemin relatif.
+    return fallbackImage; // Cas par défaut.
   }
 
   function updateStats(guesses) {
@@ -58,26 +60,26 @@
     const obelix = guesses.filter(item => item.guess && item.guess.toLowerCase().includes('obelix')).length;
     const average = total === 0 ? 0 : Math.round(guesses.reduce((sum, item) => sum + normalizeReliability(item.win), 0) / total);
 
-    elements.statsTotal.textContent = total;
-    elements.statsAsterix.textContent = asterix;
-    elements.statsObelix.textContent = obelix;
-    elements.statsAverage.textContent = `${average}%`;
+    elements.statsTotal.textContent = total; // Affiche le total des prédictions.
+    elements.statsAsterix.textContent = asterix; // Nombre d'analyses Astérix.
+    elements.statsObelix.textContent = obelix; // Nombre d'analyses Obélix.
+    elements.statsAverage.textContent = `${average}%`; // Moyenne de fiabilité.
   }
 
   function getSortedGuesses(guesses) {
     return [...guesses].sort((a, b) => {
       const left = new Date(a.date).getTime();
       const right = new Date(b.date).getTime();
-      return state.sortDescending ? right - left : left - right;
+      return state.sortDescending ? right - left : left - right; // Tri par date.
     });
   }
 
   function applyFilter(filter) {
-    state.currentFilter = filter;
-    state.currentPage = 1;
+    state.currentFilter = filter; // Met à jour le filtre actif.
+    state.currentPage = 1; // Réinitialise la pagination.
 
     elements.filterButtons.forEach(button => {
-      button.classList.toggle('is-active', button.dataset.filter === filter);
+      button.classList.toggle('is-active', button.dataset.filter === filter); // Active le bouton correct.
     });
 
     state.filteredGuesses = state.guesses.filter(item => {
@@ -85,14 +87,14 @@
       return item.guess && item.guess.toLowerCase() === filter.toLowerCase();
     });
 
-    renderHistory();
-    updateStats(state.filteredGuesses);
+    renderHistory(); // Rafraîchit l'affichage.
+    updateStats(state.filteredGuesses); // Rafraîchit les compteurs.
   }
 
   function renderHistory() {
     const sorted = getSortedGuesses(state.filteredGuesses);
     const start = (state.currentPage - 1) * state.pageSize;
-    const pageItems = sorted.slice(start, start + state.pageSize);
+    const pageItems = sorted.slice(start, start + state.pageSize); // Sélectionne les éléments de la page.
 
     elements.historyGrid.innerHTML = pageItems.map(item => {
       const reliability = normalizeReliability(item.win);
@@ -123,11 +125,11 @@
     }).join('');
 
     const hasItems = pageItems.length > 0;
-    elements.emptyState.hidden = hasItems;
+    elements.emptyState.hidden = hasItems; // Masque l'état vide si des résultats sont présents.
     elements.historyGrid.setAttribute('aria-busy', 'false');
     elements.historyGrid.style.display = hasItems ? 'grid' : 'none';
 
-    renderPagination(sorted.length);
+    renderPagination(sorted.length); // Met à jour la pagination.
   }
 
   function renderPagination(totalItems) {
@@ -148,7 +150,7 @@
     elements.pagination.innerHTML = pages.join('');
     elements.pagination.querySelectorAll('.page-button').forEach(button => {
       button.addEventListener('click', () => {
-        state.currentPage = Number(button.dataset.page);
+        state.currentPage = Number(button.dataset.page); // Change la page sélectionnée.
         renderHistory();
       });
     });
@@ -158,7 +160,7 @@
     const token = getAuthToken();
     if (!token) {
       elements.historyGrid.innerHTML = '<p class="page-error">Jeton d\'authentification manquant. Veuillez vous reconnecter.</p>';
-      return;
+      return; // Aucun token, impossible de récupérer l'historique.
     }
 
     elements.historyGrid.setAttribute('aria-busy', 'true');
@@ -184,10 +186,10 @@
         throw new Error('Réponse inattendue du serveur');
       }
 
-      state.guesses = data;
-      state.filteredGuesses = data;
-      updateStats(state.filteredGuesses);
-      renderHistory();
+      state.guesses = data; // Stocke les prédictions reçues.
+      state.filteredGuesses = data; // Initialise le filtrage sur toutes les prédictions.
+      updateStats(state.filteredGuesses); // Met à jour les compteurs.
+      renderHistory(); // Affiche les cartes.
     } catch (error) {
       elements.historyGrid.innerHTML = `<p class="page-error">Impossible de charger l'historique : ${error.message}</p>`;
       elements.emptyState.hidden = true;
@@ -196,14 +198,14 @@
   }
 
   elements.filterButtons.forEach(button => {
-    button.addEventListener('click', () => applyFilter(button.dataset.filter));
+    button.addEventListener('click', () => applyFilter(button.dataset.filter)); // Ajoute les filtres.
   });
 
   elements.sortButton.addEventListener('click', () => {
-    state.sortDescending = !state.sortDescending;
+    state.sortDescending = !state.sortDescending; // Inverse l'ordre de tri.
     elements.sortButton.textContent = state.sortDescending ? 'Plus récentes' : 'Plus anciennes';
     renderHistory();
   });
 
-  document.addEventListener('DOMContentLoaded', fetchGuesses);
+  document.addEventListener('DOMContentLoaded', fetchGuesses); // Charge l'historique au chargement de la page.
 })();

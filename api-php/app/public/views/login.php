@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <!-- Définition du document HTML et de sa langue -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vision-ix — Connexion</title>
 
+  <!-- Chargement des polices et du fichier CSS principal -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,6 +16,7 @@
 
   <header class="site-header">
     <div class="container header-inner">
+      <!-- Logo du site et lien vers la page d'accueil -->
       <a href="/" class="brand" aria-label="Vision-ix">
         <span class="brand-logo" aria-hidden="true">
           <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -27,6 +30,7 @@
         </span>
       </a>
 
+      <!-- Barre de navigation principale -->
       <nav class="main-nav" aria-label="Navigation principale">
         <a href="/" class="nav-link">Défiez-moi</a>
         <a href="#" class="nav-link">Statistique</a>
@@ -37,10 +41,12 @@
   </header>
 
   <main class="main container">
+    <!-- Bloc de connexion utilisateur -->
     <section class="card login-card" aria-labelledby="login-title">
       <h1 id="login-title" class="card-title">Connexion</h1>
       <p class="login-copy">Connectez-vous pour enregistrer vos analyses et consulter l'historique des prédictions.</p>
 
+      <!-- Formulaire de saisie du login -->
       <form id="login-form">
         <div class="form-group">
           <label for="email">Adresse email</label>
@@ -61,6 +67,7 @@
         </div>
       </form>
 
+      <!-- Aide avec comptes de démonstration -->
       <div class="login-help" aria-live="polite">
         <p>Exemples de comptes disponibles :</p>
         <ul>
@@ -69,10 +76,12 @@
         </ul>
       </div>
 
+      <!-- Zone d'affichage des messages d'erreur -->
       <div class="error-message" id="login-error" hidden role="alert"></div>
     </section>
   </main>
 
+  <!-- Scripts de gestion de l'authentification et du formulaire -->
   <script src="/assets/js/auth.js" defer></script>
   <script src="/assets/js/login.js" defer></script>
 </body>

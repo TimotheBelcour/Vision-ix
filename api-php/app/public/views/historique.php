@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <!-- Déclaration du document HTML et de la langue -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vision-ix — Historique des prédictions</title>
 
+  <!-- Chargement des polices et du fichier CSS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,6 +17,7 @@
 
   <header class="site-header">
     <div class="container header-inner">
+      <!-- Logo et titre du site -->
       <a href="/" class="brand" aria-label="Vision-ix">
         <span class="brand-logo" aria-hidden="true">
           <svg viewBox="0 0 32 32" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -28,6 +31,7 @@
         </span>
       </a>
 
+      <!-- Navigation principale -->
       <nav class="main-nav" aria-label="Navigation principale">
         <a href="/" class="nav-link">Défiez-moi</a>
         <a href="#" class="nav-link">Statistique</a>
@@ -38,12 +42,14 @@
   </header>
 
   <main class="main container">
+    <!-- En-tête de la page historique -->
     <section class="hero hero-history">
       <span class="hero-star" aria-hidden="true">&#9733;</span>
       <h1 class="hero-title">Historique des prédictions</h1>
       <p class="hero-subtitle">Toutes vos analyses classées par dates</p>
     </section>
 
+    <!-- Indicateurs d'activité de l'historique -->
     <section class="stats-grid" aria-label="Compteurs de l'historique">
       <article class="stat-card">
         <span class="stat-label">TOTAL ANALYSES</span>
@@ -63,6 +69,7 @@
       </article>
     </section>
 
+    <!-- Filtres et tri de l'historique -->
     <section class="filter-panel" aria-label="Filtres et tri">
       <div class="filter-group" role="tablist" aria-label="Filtrer les prédictions">
         <button class="btn btn-filter is-active" data-filter="all" type="button">TOUS</button>
@@ -72,6 +79,7 @@
       <button class="btn btn-secondary" id="sort-button" type="button">Plus récentes</button>
     </section>
 
+    <!-- Grille des cartes d'historique -->
     <section class="history-section">
       <div id="history-grid" class="history-grid" aria-live="polite" aria-busy="true"></div>
       <div id="empty-state" class="empty-state" hidden>Aucune prédiction disponible pour ce filtre.</div>
@@ -94,6 +102,7 @@
     </div>
   </footer>
 
+  <!-- Scripts d'authentification et d'affichage de l'historique -->
   <script src="/assets/js/auth.js" defer></script>
   <script src="/assets/js/historique.js" defer></script>
 </body>
