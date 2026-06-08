@@ -405,14 +405,94 @@ body {
   font-style: italic;
 }
 
-/* ============ CAMERA NOTICE ============ */
+/* ============ CAMERA MODAL ============ */
 
-.camera-notice {
-  margin: 10px 0 0;
+.camera-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 16px;
+}
+
+.camera-modal[hidden] {
+  display: none;
+}
+
+.camera-box {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 540px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.camera-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+}
+
+.camera-box-header h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 17px;
+  color: var(--color-text);
+}
+
+.camera-close {
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: #666;
+  padding: 2px 6px;
+}
+
+.camera-close:hover {
+  color: #000;
+}
+
+/* La balise video seule — display:block + width:100% + height:auto
+   est la combinaison la plus fiable sur Safari/WebKit pour afficher
+   un flux getUserMedia sans fond noir */
+#camera-video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.camera-error {
+  padding: 16px;
+  font-size: 13px;
+  color: var(--color-red-dark);
   text-align: center;
-  font-size: 12px;
-  font-style: italic;
-  color: var(--color-text-muted);
+}
+
+.camera-box-footer {
+  padding: 14px 16px;
+  text-align: center;
+  border-top: 1px solid #ddd;
+}
+
+.btn-capture {
+  background: var(--color-green);
+  color: #fff;
+  font-size: 14px;
+  padding: 11px 32px;
+  gap: 8px;
+  box-shadow: 0 2px 0 var(--color-green-deep);
+}
+
+.btn-capture:hover:not(:disabled) {
+  background: var(--color-green-deep);
 }
 
 /* ============ RESULT CARD ============ */
@@ -449,7 +529,79 @@ body {
   font-size: 22px;
   font-weight: 700;
   color: var(--color-text);
-  margin: 0;
+  margin: 0 0 22px;
+}
+
+/* ============ FEEDBACK ============ */
+
+.feedback {
+  margin-top: 6px;
+}
+
+.feedback-question {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0 0 12px;
+}
+
+.feedback-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.feedback-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 9px 16px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.05s ease;
+}
+
+.feedback-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.feedback-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.feedback-yes        { border-color: #6fa86c; color: #2f6b2d; }
+.feedback-yes:hover:not(:disabled) { background: #eaf5e9; }
+
+.feedback-neutral    { border-color: var(--color-gold-soft); color: #8a6b15; }
+.feedback-neutral:hover:not(:disabled) { background: #fbf2dc; }
+
+.feedback-no         { border-color: #d98778; color: var(--color-red-dark); }
+.feedback-no:hover:not(:disabled) { background: #fdeae4; }
+
+.feedback-btn.is-selected {
+  background: #1a3d1f0d;
+  border-width: 2px;
+  font-weight: 700;
+}
+
+.feedback-thanks {
+  margin: 16px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-green);
+}
+
+.feedback-stats {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--color-text-muted);
 }
 
 .btn-analyse.is-loading {
