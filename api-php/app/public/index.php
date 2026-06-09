@@ -26,11 +26,15 @@ AppFactory::setContainer($container);
 //create
 $app = AppFactory::create();
  
+// Route de la page d'accueil "Défiez-moi".
+// On utilise la temporisation de sortie (ob_start / ob_get_clean) pour
+// "capturer" le HTML produit par le template home.php dans une variable,
+// puis on l'injecte dans la réponse Slim. C'est le point d'entrée de ma partie.
 $app->get('/', function (Request $request, Response $response, $args) {
-  ob_start();
-  require __DIR__ . '/views/home.php';
-  $html = ob_get_clean();
-  $response->getBody()->write($html);
+  ob_start();                              // démarre la capture de la sortie
+  require __DIR__ . '/views/home.php';     // exécute le template (génère le HTML)
+  $html = ob_get_clean();                  // récupère le HTML et vide le tampon
+  $response->getBody()->write($html);      // écrit le HTML dans le corps de la réponse
   return $response->withHeader('Content-Type', 'text/html; charset=utf-8');
 });
 

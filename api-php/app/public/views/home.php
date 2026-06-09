@@ -1,3 +1,19 @@
+<?php
+/* =====================================================================
+ * views/home.php — Template HTML de la page "Défiez-moi" (accueil)
+ * ---------------------------------------------------------------------
+ * Ce fichier décrit la STRUCTURE de la page. Il est inclus par index.php
+ * sur la route GET '/' (rendu via Slim). Il ne contient pas de logique :
+ * tout le comportement dynamique est géré par /assets/js/app.js, et le
+ * style par /assets/css/style.css.
+ *
+ * Zones importantes à repérer pour l'oral :
+ *   - .upload-card : importer une image + bouton "Prendre une photo"
+ *   - #camera-modal : fenêtre webcam (vidéo + bouton Capturer)
+ *   - #btn-analyse : déclenche l'envoi à l'API
+ *   - #result-card : bloc résultat IA + boutons de feedback Oui/Neutre/Non
+ * ===================================================================== */
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -47,6 +63,8 @@
 
   <main class="main container">
 
+    <!-- ZONE 1 : import d'image. La dropzone gère le clic ET le glisser-déposer.
+         L'<input type="file"> est caché : on le déclenche via le bouton stylisé. -->
     <section class="card upload-card" aria-labelledby="upload-title">
       <h2 id="upload-title" class="card-title">Importer votre image</h2>
 
@@ -86,7 +104,9 @@
       <p class="file-name" id="file-name" hidden></p>
     </section>
 
-    <!-- Modale webcam -->
+    <!-- ZONE 2 : modale webcam (cachée par défaut via l'attribut "hidden").
+         <video> affiche le flux en direct, <canvas> sert à figer la photo.
+         app.js ouvre/ferme cette modale et gère la capture. -->
     <div class="camera-modal" id="camera-modal" hidden role="dialog" aria-modal="true" aria-labelledby="camera-modal-title">
       <div class="camera-box">
         <div class="camera-box-header">
@@ -108,6 +128,8 @@
       </div>
     </div>
 
+    <!-- ZONE 3 : bouton ANALYSER. Désactivé tant qu'aucune image n'est choisie.
+         Au clic, app.js envoie l'image à POST /api/guesses. -->
     <button type="button" class="btn btn-analyse" id="btn-analyse" disabled>
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <circle cx="12" cy="12" r="9"/>
@@ -120,6 +142,9 @@
 
     <p class="login-note">Connectez-vous pour enregistrer vos prédictions et les retrouver dans l'historique.</p>
 
+    <!-- ZONE 4 : bloc résultat IA (caché jusqu'à la réponse de l'API).
+         Affiche l'image, la prédiction (Asterix/Obelix) et le feedback.
+         aria-live="polite" = lecteurs d'écran annoncent le résultat. -->
     <section class="card result-card" id="result-card" hidden aria-live="polite">
       <h2 class="card-title result-title">Résultat IA</h2>
       <div class="result-image-wrap">
@@ -127,6 +152,8 @@
       </div>
       <p class="result-guess" id="result-guess"></p>
 
+      <!-- ZONE 5 : feedback. L'attribut data-win porte la valeur envoyée à l'API :
+           Oui=1, Neutre=0, Non=-1. app.js lit ce data-win au clic. -->
       <div class="feedback" id="feedback">
         <p class="feedback-question">Ce résultat est-il correct&nbsp;?</p>
         <div class="feedback-buttons" role="group" aria-label="Votre retour sur la prédiction">
@@ -154,6 +181,8 @@
             <span>Non</span>
           </button>
         </div>
+        <!-- Remplis dynamiquement par app.js après la réponse de l'API :
+             message de remerciement + taux de réussite (zone 6). -->
         <p class="feedback-thanks" id="feedback-thanks" hidden>Merci pour votre retour</p>
         <p class="feedback-stats" id="feedback-stats" hidden></p>
       </div>
